@@ -1,0 +1,4 @@
+// Comment.
+predicate(1, 0).
+predicate(X, Y, f(Z)) <= X = Y, foo(x).
+predicate(X, Y) <= Y is X + Y * 42.
