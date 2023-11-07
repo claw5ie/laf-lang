@@ -34,6 +34,29 @@ struct Token
   LineInfo line_info;
 };
 
+const char *
+token_type_to_string(Token::Type type)
+{
+  switch (type)
+    {
+    case Token::Add:         return "'+'";
+    case Token::Mul:         return "'*'";
+    case Token::Open_Paren:  return "'('";
+    case Token::Close_Paren: return "')'";
+    case Token::Comma:       return "','";
+    case Token::Dot:         return "'.'";
+    case Token::Equal:       return "'='";
+    case Token::Left_Imply:  return "'<='";
+    case Token::Is:          return "'is'";
+    case Token::Variable:    return "variable";
+    case Token::Atom:        return "atom";
+    case Token::Integer:     return "integer";
+    case Token::End_Of_File: return "EOF";
+    }
+
+  UNREACHABLE();
+}
+
 struct Tokenizer
 {
   constexpr static uint8_t LOOKAHEAD = 2;
@@ -67,6 +90,17 @@ struct Tokenizer
     ++token_start;
     token_start %= LOOKAHEAD;
     --token_count;
+  }
+
+  void expect(Token::Type expected)
+  {
+    if (peek() != expected)
+      {
+        auto token = grab();
+        PRINT_ERROR(filepath, token.line_info, "expected %s, but got %s", token_type_to_string(expected), token_type_to_string(token.type));
+        exit(EXIT_FAILURE);
+      }
+    advance();
   }
 
   void advance_line_info(char ch)
@@ -197,26 +231,3 @@ struct Tokenizer
     ++token_count;
   }
 };
-
-std::string_view
-token_type_to_string(Token::Type type)
-{
-  switch (type)
-    {
-    case Token::Add:         return "'+'";
-    case Token::Mul:         return "'*'";
-    case Token::Open_Paren:  return "'('";
-    case Token::Close_Paren: return "')'";
-    case Token::Comma:       return "','";
-    case Token::Dot:         return "'.'";
-    case Token::Equal:       return "'='";
-    case Token::Left_Imply:  return "'<='";
-    case Token::Is:          return "'is'";
-    case Token::Variable:    return "variable";
-    case Token::Atom:        return "atom";
-    case Token::Integer:     return "integer";
-    case Token::End_Of_File: return "EOF";
-    }
-
-  UNREACHABLE();
-}

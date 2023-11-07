@@ -1,4 +1,5 @@
-// Comment.
-predicate(1, 0).
-predicate(X, Y, f(Z)) <= X = Y, foo(x).
-predicate(X, Y) <= Y is X + Y * 42.
+// Add two church numerals.
+add(0, X, X).
+add(s(X), Y, s(Z)) <= add(X, Y, Z).
+
+<= add(s(0), s(0), X).
